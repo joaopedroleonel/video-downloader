@@ -1,0 +1,7 @@
+flask
+flask-socketio
+yt-dlp
+PyJWT
+dotenv
+gevent
+gevent-websocket

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Downloader</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/icon.svg') }}">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+    <script src="{{ url_for('static', filename='js/socket.io.min.js') }}"></script>
+    <meta name="robots" content="noindex, nofollow">
+</head>
+
+<body class="flex-between">
+    <div class="container">
+        <main class="download-box">
+            <h2>Baixar Vídeo</h2>
+
+            <div class="form-group">
+                <label for="url" class="required">URL do vídeo:</label>
+                <input type="url" id="url" placeholder="Cole o link do vídeo aqui" required>
+            </div>
+
+            <div class="form-group">
+                <div class="checkbox-container">
+                    <input type="checkbox" id="playlist">
+                    <label for="playlist">Playlist</label>
+                </div>
+            </div>
+
+            <div class="form-group">
+                <p>Formato:</p>
+                <div class="radio-container">
+                    <div class="radio-option">
+                        <input type="radio" id="mp4" name="format" value="1" checked>
+                        <label for="mp4">MP4</label>
+                    </div>
+                    <div class="radio-option">
+                        <input type="radio" id="mp3" name="format" value="2">
+                        <label for="mp3">MP3</label>
+                    </div>
+                </div>
+            </div>
+
+            <button id="download-btn" style="margin-bottom: 10px;">
+                Baixar
+            </button>
+
+            <p id="text-error">O download do vídeo não pôde ser realizado.</p>
+            <p id="status"></p>
+        </main>
+    </div>
+    <footer class="site-footer">
+        <div class="footer-container">
+            <div class="footer-content">
+                <p class="footer-text">
+                    Powered by <a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noopener">yt-dlp</a>
+                </p>
+                <div class="footer-links">
+                    <a href="https://github.com/yt-dlp/yt-dlp/blob/master/supportedsites.md">Sites Suportados</a>
+                    <span class="separator">•</span>
+                    <a href="https://github.com/yt-dlp/yt-dlp" target="_blank" rel="noopener">GitHub yt-dlp</a>
+                    <span class="separator">•</span>
+                    <a href="https://github.com/joaopedroleonel" target="_blank" rel="noopener">GitHub do Criador</a>
+                </div>
+                <p class="footer-copyright">
+                    &copy; {{ year }} VideoDownloader. Todos os direitos reservados.
+                </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+
+        function resetIu() {
+
+            document.getElementById('download-btn').removeAttribute('disabled');
+            document.getElementById('status').textContent = '';
+
+        }
+
+        document.getElementById('download-btn').addEventListener('click', async function () {
+
+            document.getElementById('text-error').style.display = 'none';
+            document.getElementById('status').textContent = 'Conectando ao servidor...';
+
+            const url = document.getElementById('url').value;
+            const isPlaylist = document.getElementById('playlist').checked;
+            const format = document.querySelector('input[name="format"]:checked').value;
+
+            const payload = {
+                'playlist': isPlaylist,
+                'type': Number(format),
+                'url': url
+            }
+
+            if (url) {
+
+                try {
+
+                    const downloadBtn = document.getElementById('download-btn');
+                    downloadBtn.setAttribute('disabled', '');
+
+                    let socket = io({ reconnection: false });
+
+                    socket.on('connect', () => {
+                        socket.emit("start", payload);
+                    });
+
+                    socket.on('check', (data) => {
+
+                        if (data.status) {
+                            document.getElementById('status').textContent = data.status;
+                        }
+
+                        if (data.file) {
+
+                            try {
+
+                                const url = './file/' + encodeURIComponent(data.file);
+                                const a = document.createElement('a');
+                                a.href = url;
+                                a.download = encodeURIComponent(data.file);
+                                document.body.appendChild(a);
+                                a.click();
+                                a.remove();      
+                                document.getElementById('url').value = '';
+
+                            } catch (error) {
+
+                                document.getElementById('text-error').style.display = 'block';
+
+                            }
+
+                            resetIu();
+
+                            if (socket && socket.connected) {
+                                socket.disconnect();
+                            }
+
+                        }
+
+                    });
+
+                    socket.on('disconnect', () => {
+                        socket.disconnect();
+                        resetIu();
+                    });
+
+                    socket.on('error', () => {
+                        resetIu();
+                        document.getElementById('text-error').style.display = 'block';
+                    });
+
+                } catch (error) {
+
+                    resetIu();
+                    document.getElementById('text-error').style.display = 'block';
+                    if (socket && socket.connected) {
+                        socket.disconnect();
+                    }
+
+                }
+
+            }
+
+        });
+
+    </script>
+</body>
+
+</html>
