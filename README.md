@@ -2,8 +2,6 @@
 
 Um site de download de vídeos construído com Flask, que utiliza o `yt-dlp` para baixar conteúdos de diversas plataformas. O projeto integra `Flask-SocketIO` para comunicação em tempo real, `gevent` para gerenciamento de conexões assíncronas e `JWT` (JSON Web Tokens) para autenticação de usuários.
 
----
-
 ## Tecnologias Utilizadas
 
 * **Python 3.8+**
@@ -14,16 +12,12 @@ Um site de download de vídeos construído com Flask, que utiliza o `yt-dlp` par
 * **PyJWT**: Geração e validação de tokens JWT para autenticação
 * **HTML/CSS/JavaScript**: Frontend
 
----
-
 ## Funcionalidades Principais
 
 1. **Download de vídeos**: permiti que o usuário insira a URL do vídeo e escolha o formato desejado.
 2. **Interface em tempo real**: status de progresso do download exibido ao vivo.
 3. **Autenticação JWT**: apenas usuários autenticados podem iniciar downloads.
 4. **Escalabilidade**: executando em `gevent`, suporta múltiplas conexões simultâneas.
-
----
 
 ## Estrutura do Projeto
 
