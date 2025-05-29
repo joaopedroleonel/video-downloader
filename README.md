@@ -54,8 +54,9 @@ video-downloader/
    * Na raiz do projeto, crie um arquivo chamado `.env` e defina as variáveis de ambiente necessárias:
 
      ```bash
-     FLASK_ENV=development
-     JWT_SECRET=seu_segredo_aqui
+     SECRET_KEY=...
+     KEY_JWT=...
+     CORRECT_PASSWORD=...
      ```
 2. **Preparar o ambiente**
 
