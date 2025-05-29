@@ -46,3 +46,41 @@ video-downloader/
 ├── .gitignore               # Arquivos e pastas ignorados pelo Git
 └── README.md                # Documentação do projeto
 ```
+
+## Como Executar a Aplicação
+
+1. **Criar arquivo `.env`**
+
+   * Na raiz do projeto, crie um arquivo chamado `.env` e defina as variáveis de ambiente necessárias:
+
+     ```bash
+     FLASK_ENV=development
+     JWT_SECRET=seu_segredo_aqui
+     ```
+2. **Preparar o ambiente**
+
+   * Crie e ative um ambiente virtual (recomendado):
+
+     ```bash
+     python3 -m venv venv
+     source venv/bin/activate  # Linux/Mac
+     venv\Scripts\activate     # Windows
+     ```
+3. **Instalar dependências**
+
+   ```bash
+   pip install -r requirements.txt
+   ```
+4. **Criar pasta para arquivos**
+
+   ```bash
+   mkdir files
+   ```
+5. **Iniciar o servidor**
+
+   ```bash
+   python main.py
+   ```
+6. **Acessar a interface**
+
+   * Abra o navegador em `http://localhost:5000` e faça login para começar a baixar vídeos.
